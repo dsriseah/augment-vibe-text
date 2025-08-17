@@ -10,6 +10,7 @@ A Node.js program that reads documents with `---:` dividers and splits them into
 - **Reference Generation**: Automatically adds reference lines to the first file pointing to all other generated files
 - **Document Reconstruction**: Reverse utility to combine referenced files back into original source
 - **Node-Based Canvas**: Interactive visual editor with draggable text cards and connections
+- **Memory-Efficient Processing**: Streaming line-by-line processing for large files
 - **Content Preservation**: Maintains all original formatting and content
 - **Error Handling**: Comprehensive validation and error reporting
 - **CLI Interface**: Easy-to-use command line interface with multiple options
@@ -73,6 +74,9 @@ node src/index.js -i document.md -o results --hash-length 12
 
 # Process with shared timestamp for all sections
 node src/index.js --shared-timestamp --verbose
+
+# Configure streaming threshold for large files (default: 10MB)
+node src/index.js --streaming-threshold 5 --verbose
 
 # Reconstruct original document from split files
 node src/reconstruct.js -i _out/multi-source.md
@@ -141,6 +145,34 @@ Original content...
 ```
 
 These references point to all other generated files, creating a navigation system from the main document to its sections.
+
+### Memory-Efficient Processing
+
+The system automatically chooses optimal processing strategies based on file size:
+
+```bash
+# Files under 10MB: Fast in-memory processing
+node src/index.js small-document.md
+
+# Files over 10MB: Streaming line-by-line processing
+node src/index.js large-document.md
+
+# Custom threshold (in MB)
+node src/index.js --streaming-threshold 5 large-document.md
+```
+
+**Memory Usage Comparison:**
+
+- **Traditional**: O(n) memory - loads entire file into memory
+- **Streaming**: O(1) memory - processes line-by-line with constant memory usage
+- **Hash Index**: O(sections) memory for fast content lookups
+
+**Benefits:**
+
+- Handles files of any size with minimal memory footprint
+- Scalable for production servers processing large documents
+- Automatic threshold-based optimization
+- Hash-based section indexing for efficient lookups
 
 ### Document Reconstruction
 
@@ -256,6 +288,31 @@ const reconstructor = new DocumentReconstructor({ inputDir: "_out" });
 const original = await reconstructor.reconstructDocument(
   "_out/multi-source.md"
 );
+```
+
+#### StreamingFileProcessor
+
+Memory-efficient line-by-line file processing for large documents.
+
+```javascript
+import { StreamingFileProcessor } from "./src/lib/streamingFileProcessor.js";
+
+const processor = new StreamingFileProcessor();
+const metadata = await processor.analyzeFile("large-document.md");
+const section = await processor.extractSection("large-document.md", 1, 10);
+```
+
+#### HybridFileProcessor
+
+Intelligent processor that chooses optimal strategy based on file size.
+
+```javascript
+import { HybridFileProcessor } from "./src/lib/hybridFileProcessor.js";
+
+const processor = new HybridFileProcessor({
+  streamingThreshold: 10 * 1024 * 1024, // 10MB
+});
+const sections = await processor.readAndSplit("document.md");
 ```
 
 #### Node-Based Canvas Server
