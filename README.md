@@ -8,6 +8,7 @@ A Node.js program that reads documents with `---:` dividers and splits them into
 - **Smart Naming**: First file keeps original source name, other files use SHA-256 hash names
 - **Timestamp Integration**: Adds timestamps to divider lines in format `HH:MM:SS YYYY/MM/DD`
 - **Reference Generation**: Automatically adds reference lines to the first file pointing to all other generated files
+- **Document Reconstruction**: Reverse utility to combine referenced files back into original source
 - **Content Preservation**: Maintains all original formatting and content
 - **Error Handling**: Comprehensive validation and error reporting
 - **CLI Interface**: Easy-to-use command line interface with multiple options
@@ -71,6 +72,12 @@ node src/index.js -i document.md -o results --hash-length 12
 
 # Process with shared timestamp for all sections
 node src/index.js --shared-timestamp --verbose
+
+# Reconstruct original document from split files
+node src/reconstruct.js -i _out/multi-source.md
+
+# Analyze references without reconstructing
+node src/reconstruct.js -i _out/multi-source.md --analyze --verbose
 ```
 
 ## How It Works
@@ -123,6 +130,28 @@ Original content...
 
 These references point to all other generated files, creating a navigation system from the main document to its sections.
 
+### Document Reconstruction
+
+The reconstruction utility can combine the split files back into the original document:
+
+```bash
+# Reconstruct from the main file with references
+node src/reconstruct.js -i _out/multi-source.md
+
+# Specify custom output file
+node src/reconstruct.js -i _out/multi-source.md -o original.md
+
+# Analyze references without reconstructing
+node src/reconstruct.js -i _out/multi-source.md --analyze
+```
+
+**Features:**
+
+- Automatically finds and reads all referenced files
+- Restores original `---:` divider format (removes hash and timestamp)
+- Validates that all referenced files exist
+- Provides detailed analysis of references and missing files
+
 ## API Reference
 
 ### Core Classes
@@ -169,6 +198,19 @@ import { FileWriter } from "./src/lib/fileWriter.js";
 
 const writer = new FileWriter({ outputDir: "_out" });
 await writer.writeSections(sections);
+```
+
+#### DocumentReconstructor
+
+Reconstructs original documents from split files with references.
+
+```javascript
+import { DocumentReconstructor } from "./src/lib/documentReconstructor.js";
+
+const reconstructor = new DocumentReconstructor({ inputDir: "_out" });
+const original = await reconstructor.reconstructDocument(
+  "_out/multi-source.md"
+);
 ```
 
 ## Testing
