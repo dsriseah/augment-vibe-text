@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { FileProcessor } from "./lib/fileProcessor.js";
+import { HybridFileProcessor } from "./lib/hybridFileProcessor.js";
 import { FileWriter } from "./lib/fileWriter.js";
 
 /**
@@ -21,7 +21,9 @@ class MultiSourceProcessor {
       ...options,
     };
 
-    this.fileProcessor = new FileProcessor();
+    this.fileProcessor = new HybridFileProcessor({
+      streamingThreshold: options.streamingThreshold || 10 * 1024 * 1024, // 10MB default
+    });
     this.fileWriter = new FileWriter({
       outputDir: this.options.outputDir,
       overwriteExisting: this.options.overwrite,
@@ -142,6 +144,7 @@ Options:
   --input, -i <file>     Input file path (default: multi-source.md)
   --output, -o <dir>     Output directory (default: _out)
   --hash-length <num>    Hash length in characters (default: 8)
+  --streaming-threshold <mb>  File size threshold for streaming (default: 10MB)
   --overwrite           Overwrite existing files
   --clean               Clean output directory before processing
   --shared-timestamp    Use same timestamp for all files
@@ -202,6 +205,10 @@ function parseArgs() {
 
       case "--no-references":
         options.addReferences = false;
+        break;
+
+      case "--streaming-threshold":
+        options.streamingThreshold = parseInt(args[++i], 10) * 1024 * 1024; // Convert MB to bytes
         break;
 
       case "--verbose":
