@@ -154,7 +154,7 @@ export class DocumentReconstructor {
           "utf-8"
         );
 
-        // Remove the enhanced divider line (with hash and timestamp) and restore original
+        // Remove timestamp from divider line but preserve hash for immutable reference
         const cleanedContent = this.cleanReferencedContent(referencedContent);
 
         sections.push(cleanedContent);
@@ -172,9 +172,9 @@ export class DocumentReconstructor {
   }
 
   /**
-   * Clean referenced content by removing enhanced divider and restoring original
+   * Clean referenced content by removing timestamp but preserving hash
    * @param {string} content - Content from referenced file
-   * @returns {string} Cleaned content with original divider
+   * @returns {string} Cleaned content with hash-only divider
    */
   cleanReferencedContent(content) {
     const lines = content.split("\n");
@@ -183,11 +183,13 @@ export class DocumentReconstructor {
     if (lines.length > 0) {
       const firstLine = lines[0];
       const enhancedDividerPattern =
-        /^---:\s+[A-F0-9]+\s+\d{2}:\d{2}:\d{2}\s+\d{4}\/\d{2}\/\d{2}$/i;
+        /^---:\s+([A-F0-9]+)\s+\d{2}:\d{2}:\d{2}\s+\d{4}\/\d{2}\/\d{2}$/i;
+      const match = firstLine.match(enhancedDividerPattern);
 
-      if (enhancedDividerPattern.test(firstLine)) {
-        // Replace enhanced divider with simple divider
-        lines[0] = "---:";
+      if (match) {
+        // Replace enhanced divider with hash-only divider (preserve hash, remove timestamp)
+        const hash = match[1];
+        lines[0] = `---: ${hash}`;
       }
     }
 

@@ -102,8 +102,9 @@ More content`;
       contentWithEnhancedDivider
     );
 
-    assert.ok(cleaned.startsWith("---:\n"));
+    assert.ok(cleaned.startsWith("---: ABCD1234\n"));
     assert.ok(cleaned.includes("Section content here"));
+    assert.ok(!cleaned.includes("16:12:30 2025/08/16")); // Timestamp should be removed
 
     await cleanup();
   });
@@ -193,9 +194,13 @@ Final content`;
       assert.ok(reconstructed.includes("Section 1 content"));
       assert.ok(reconstructed.includes("Section 2 content"));
 
-      // Check that dividers are restored to simple format
-      const dividerMatches = reconstructed.match(/^---:$/gm);
+      // Check that dividers preserve hash but remove timestamp
+      const dividerMatches = reconstructed.match(/^---:\s+[A-F0-9]+$/gm);
       assert.strictEqual(dividerMatches.length, 2);
+
+      // Verify specific hashes are preserved
+      assert.ok(reconstructed.includes("---: ABCD1234"));
+      assert.ok(reconstructed.includes("---: EFAB5678"));
     } finally {
       await cleanup();
     }

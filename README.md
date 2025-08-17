@@ -111,10 +111,18 @@ Each section becomes a separate file:
 
 ### Divider Line Transformation
 
+**During Splitting:**
 Original divider lines are enhanced with hash and timestamp:
 
 ```markdown
 ---: A1B2C3D4 16:12:30 2025/08/16
+```
+
+**During Reconstruction:**
+Timestamps are removed but hashes are preserved as immutable references:
+
+```markdown
+---: A1B2C3D4
 ```
 
 ### Reference Generation
@@ -148,7 +156,7 @@ node src/reconstruct.js -i _out/multi-source.md --analyze
 **Features:**
 
 - Automatically finds and reads all referenced files
-- Restores original `---:` divider format (removes hash and timestamp)
+- Preserves immutable hash references while removing timestamps (`---: HASH`)
 - Validates that all referenced files exist
 - Provides detailed analysis of references and missing files
 
