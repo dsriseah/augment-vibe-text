@@ -9,7 +9,7 @@ A Node.js program that reads documents with `---:` dividers and splits them into
 - **Timestamp Integration**: Adds timestamps to divider lines in format `HH:MM:SS YYYY/MM/DD`
 - **Reference Generation**: Automatically adds reference lines to the first file pointing to all other generated files
 - **Document Reconstruction**: Reverse utility to combine referenced files back into original source
-- **Web Interface**: Browser-based UI to view and manage split document files
+- **Node-Based Canvas**: Interactive visual editor with draggable text cards and connections
 - **Content Preservation**: Maintains all original formatting and content
 - **Error Handling**: Comprehensive validation and error reporting
 - **CLI Interface**: Easy-to-use command line interface with multiple options
@@ -80,7 +80,7 @@ node src/reconstruct.js -i _out/multi-source.md
 # Analyze references without reconstructing
 node src/reconstruct.js -i _out/multi-source.md --analyze --verbose
 
-# Start web server to view files in browser
+# Start node-based canvas editor
 npm run server
 ```
 
@@ -164,9 +164,9 @@ node src/reconstruct.js -i _out/multi-source.md --analyze
 - Validates that all referenced files exist
 - Provides detailed analysis of references and missing files
 
-### Web Interface
+### Node-Based Canvas Interface
 
-A browser-based UI for viewing and managing split document files:
+An interactive visual editor that transforms document sections into draggable text cards:
 
 ```bash
 # Start the web server
@@ -181,12 +181,14 @@ open http://localhost:3000
 
 **Features:**
 
-- **File Browser**: View all files in the `_out` directory with previews
-- **Hash Search**: Find files by their hash identifiers
-- **Full Content View**: Modal dialogs to view complete file contents
-- **File Statistics**: Overview of main files vs. hash-based files
-- **Download Support**: Download individual files directly from the browser
-- **Responsive Design**: Works on desktop and mobile devices
+- **Floating Text Cards**: Each document appears as a draggable node with live editing
+- **Visual Connections**: Draw links between related documents with curved SVG lines
+- **Canvas Navigation**: Pan and zoom the workspace with mouse/trackpad gestures
+- **Hash-Based Search**: Find and highlight nodes by their hash identifiers
+- **Auto Layout**: Automatically organize nodes in a grid pattern
+- **Persistent Workspace**: Save and restore node positions and connections
+- **Real-Time Editing**: Edit document content directly within nodes
+- **Keyboard Shortcuts**: Delete nodes, save layout, auto-arrange (Ctrl+S, Ctrl+A)
 
 **API Endpoints:**
 
@@ -256,16 +258,17 @@ const original = await reconstructor.reconstructDocument(
 );
 ```
 
-#### Web Server
+#### Node-Based Canvas Server
 
-Express.js server for browser-based file viewing and management.
+Express.js server with interactive visual document editor.
 
 ```javascript
 import app from "./server/app.js";
 
 // Server runs on http://localhost:3000
-// Serves files from _out directory
-// Provides REST API for file access
+// Serves node-based canvas interface
+// Provides REST API for document management
+// Supports real-time editing and layout persistence
 ```
 
 ## Testing
