@@ -7,17 +7,24 @@
   "scripts": {
     "start": "node src/index.js",
     "reconstruct": "node src/reconstruct.js",
+    "server": "node server/app.js",
+    "server:dev": "node --watch server/app.js",
     "test": "node --test tests/*.test.js",
     "dev": "node --watch src/index.js"
   },
   "keywords": [
     "markdown",
     "document-processing",
-    "file-splitting"
+    "file-splitting",
+    "express",
+    "web-ui"
   ],
   "author": "",
   "license": "MIT",
   "engines": {
     "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
   }
 }

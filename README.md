@@ -9,6 +9,7 @@ A Node.js program that reads documents with `---:` dividers and splits them into
 - **Timestamp Integration**: Adds timestamps to divider lines in format `HH:MM:SS YYYY/MM/DD`
 - **Reference Generation**: Automatically adds reference lines to the first file pointing to all other generated files
 - **Document Reconstruction**: Reverse utility to combine referenced files back into original source
+- **Web Interface**: Browser-based UI to view and manage split document files
 - **Content Preservation**: Maintains all original formatting and content
 - **Error Handling**: Comprehensive validation and error reporting
 - **CLI Interface**: Easy-to-use command line interface with multiple options
@@ -78,6 +79,9 @@ node src/reconstruct.js -i _out/multi-source.md
 
 # Analyze references without reconstructing
 node src/reconstruct.js -i _out/multi-source.md --analyze --verbose
+
+# Start web server to view files in browser
+npm run server
 ```
 
 ## How It Works
@@ -160,6 +164,37 @@ node src/reconstruct.js -i _out/multi-source.md --analyze
 - Validates that all referenced files exist
 - Provides detailed analysis of references and missing files
 
+### Web Interface
+
+A browser-based UI for viewing and managing split document files:
+
+```bash
+# Start the web server
+npm run server
+
+# Development mode with auto-restart
+npm run server:dev
+
+# Access the interface
+open http://localhost:3000
+```
+
+**Features:**
+
+- **File Browser**: View all files in the `_out` directory with previews
+- **Hash Search**: Find files by their hash identifiers
+- **Full Content View**: Modal dialogs to view complete file contents
+- **File Statistics**: Overview of main files vs. hash-based files
+- **Download Support**: Download individual files directly from the browser
+- **Responsive Design**: Works on desktop and mobile devices
+
+**API Endpoints:**
+
+- `GET /api/files` - List all files with metadata
+- `GET /api/files/:filename` - Get specific file by filename
+- `GET /api/hash/:hash` - Find file by hash identifier
+- `GET /api/health` - Server health check
+
 ## API Reference
 
 ### Core Classes
@@ -219,6 +254,18 @@ const reconstructor = new DocumentReconstructor({ inputDir: "_out" });
 const original = await reconstructor.reconstructDocument(
   "_out/multi-source.md"
 );
+```
+
+#### Web Server
+
+Express.js server for browser-based file viewing and management.
+
+```javascript
+import app from "./server/app.js";
+
+// Server runs on http://localhost:3000
+// Serves files from _out directory
+// Provides REST API for file access
 ```
 
 ## Testing

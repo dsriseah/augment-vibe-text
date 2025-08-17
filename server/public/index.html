@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Source Document Viewer</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📄 Multi-Source Document Viewer</h1>
+            <p>View and manage split document files</p>
+        </header>
+
+        <div class="controls">
+            <button id="refreshBtn" class="btn btn-primary">🔄 Refresh Files</button>
+            <div class="search-container">
+                <input type="text" id="hashSearch" placeholder="Enter hash to search (e.g., 2A3534A9)" />
+                <button id="searchBtn" class="btn btn-secondary">🔍 Search by Hash</button>
+            </div>
+        </div>
+
+        <div class="stats" id="stats">
+            <div class="stat-item">
+                <span class="stat-label">Total Files:</span>
+                <span class="stat-value" id="totalFiles">-</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Main Files:</span>
+                <span class="stat-value" id="mainFiles">-</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Hash Files:</span>
+                <span class="stat-value" id="hashFiles">-</span>
+            </div>
+        </div>
+
+        <div class="files-container" id="filesContainer">
+            <div class="loading">Loading files...</div>
+        </div>
+
+        <div class="modal" id="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="modalTitle">File Details</h3>
+                    <button class="modal-close" id="modalClose">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="file-info" id="fileInfo"></div>
+                    <textarea id="fileContent" readonly></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" id="copyContentBtn">📋 Copy Content</button>
+                    <button class="btn btn-primary" id="downloadBtn">💾 Download</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
